@@ -29,6 +29,11 @@ Leaflet.js: Biblioteca para o mapa interativo.
 
 Satellite.js: Biblioteca para propagação de órbitas SGP4/SDP4 através de dados TLE.
 
+Como usar?
+Fazer dowload do zip
+Tirar o zip 
+Puxar ate ao seu browser e largar.
+
 🇬🇧 English
 📋 About the Project
 This project is an interactive tool for space enthusiasts to track the International Space Station (ISS) in real-time. It provides live telemetry and allows users to predict future sightings based on any geographical coordinate.
@@ -56,3 +61,8 @@ JavaScript (ES6+): Application logic and API fetching.
 Leaflet.js: Interactive mapping library.
 
 Satellite.js: SGP4/SDP4 orbit propagation using TLE data.
+
+How to use?
+
+Download the zip file.
+Unzip the file. Drag and drop it into your browser.
