@@ -29,9 +29,12 @@ Leaflet.js: Biblioteca para o mapa interativo.
 
 Satellite.js: Biblioteca para propagação de órbitas SGP4/SDP4 através de dados TLE.
 
-Como usar?
+🛠️ Como usar?
+
 Fazer dowload do zip
+
 Tirar o zip 
+
 Puxar ate ao seu browser e largar.
 
 🇬🇧 English
@@ -62,7 +65,8 @@ Leaflet.js: Interactive mapping library.
 
 Satellite.js: SGP4/SDP4 orbit propagation using TLE data.
 
-How to use?
+🛠️ How to use?
 
 Download the zip file.
+
 Unzip the file. Drag and drop it into your browser.
