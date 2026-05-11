@@ -1,95 +1,112 @@
-🛰️ ISS Monitor & Predictor (Monitor e Previsão da EEI)
-Uma aplicação web interativa e responsiva para monitorizar a posição da Estação Espacial Internacional (EEI) em tempo real, visualizar a sua trajetória orbital e prever a próxima passagem sobre qualquer ponto do globo.
+<p align="center">
+  <a href="https://github.com/JDS-py">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=35&pause=1000&color=2196F3&center=true&vCenter=true&width=600&lines=ISS+Monitor+%26+Predictor;Rastreio+da+EEI+em+Tempo+Real;Real-time+Space+Tracking" alt="Typing SVG" />
+  </a>
+</p>
 
-🇵🇹 Português:
-🚀 Novidades da Última Atualização
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-OPERACIONAL-brightgreen?style=for-the-badge&logo=github&logoColor=white" alt="Status Operacional" />
+  <img src="https://img.shields.io/badge/Version-2.0-blue?style=for-the-badge" alt="Versão" />
+</p>
 
-Painel da Tripulação (Em Tempo Real): Descobre quantas pessoas estão atualmente a bordo da estação, incluindo os seus nomes e missões.
+<br>
 
-Sistema de Energia Simulada: Um novo painel interativo que acompanha a exposição solar da estação (zonas de luz vs. zona de eclipse). Este sistema simula em tempo real a geração, o consumo e o nível de carga das baterias.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zGravity123/zGravity123/main/images/aboutme.png" alt="Sobre o Projeto" width="100%">
+</p>
 
-Indicador de Bateria no Dashboard: O nível de bateria simulado e o estado atual (carregar/descarregar) foram integrados na telemetria principal na parte inferior do ecrã.
+<table align="center" width="90%" border="0" cellpadding="20">
+  <tr>
+    <td width="65%" style="font-size: 16px; padding: 20px;">
+      <p><b>🇵🇹 Português:</b> Uma aplicação web interativa para monitorizar a Estação Espacial Internacional (EEI). Calcula trajetórias, prevê passagens e simula sistemas de energia em tempo real.</p>
+      <hr>
+      <p><b>🇬🇧 English:</b> An interactive web application to track the International Space Station (ISS). It calculates trajectories, predicts passes, and simulates power systems in real-time.</p>
+    </td>
+    <td width="35%" align="center">
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2I0eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/6Z7gmgb34GClW/giphy.gif" width="180" alt="ISS Orbiting" style="border-radius: 10px;" />
+    </td>
+  </tr>
+</table>
 
-Interface Renovada: Os botões de controlo no topo foram reorganizados e novos painéis laterais deslizantes ("Tripulação" e "Energia") foram adicionados para manter o mapa limpo e organizado.
+<br>
 
-🇬🇧 English:
-🚀 What's New in the Latest Update
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zGravity123/zGravity123/main/images/livestatus.png" alt="Novidades e Funcionalidades" width="100%">
+</p>
 
-Live Crew Panel: Find out exactly how many people are currently on the station, along with their names and specific spacecraft.
+### 🚀 Novidades / What's New (v2.0)
+* **👨‍🚀 Crew Panel:** Nomes e missões da tripulação em tempo real.
+* **🔋 Power System:** Simulação de carga de baterias e exposição solar.
+* **📱 UI/UX:** Interface renovada com painéis laterais deslizantes.
 
-Simulated Power System: A brand new interactive panel tracking the station's solar status (sunlight vs. eclipse zones). It simulates power generation, station load, and live battery charge levels.
+<br>
 
-Dashboard Battery Indicator: A quick battery summary and current solar status (charging/draining) are now seamlessly integrated into the main bottom telemetry dashboard.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zGravity123/zGravity123/main/images/tech.png" alt="Tech Stack" width="100%">
+</p>
 
-Enhanced Interface: The top control buttons have been reorganized, introducing smooth sliding side panels ("Crew" and "Energy") to keep the map clean and accessible.
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=html,css,js,leaflet&theme=dark" alt="My Skills" />
+  </a>
+  <br>
+  <img src="https://img.shields.io/badge/Satellite.js-000000?style=for-the-badge&logo=javascript&logoColor=white" alt="Satellite.js" />
+</p>
 
+<br>
 
-🇵🇹 Português
-📋 Sobre o Projeto
-Este projeto foi desenvolvido para entusiastas da exploração espacial que desejam saber exatamente onde a ISS está e quando poderão avistá-la no céu. A aplicação utiliza dados em tempo real e realiza cálculos orbitais localmente no browser.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zGravity123/zGravity123/main/images/topprojects.png" alt="Funcionalidades" width="100%">
+</p>
 
-✨ Funcionalidades
-Rastreio em Tempo Real: Localização exata da ISS atualizada a cada 3 segundos.
+<table align="center" width="90%">
+  <tr>
+    <th>✨ Funcionalidades (PT)</th>
+    <th>✨ Features (EN)</th>
+  </tr>
+  <tr>
+    <td>
+      <ul>
+        <li>Rastreio exato a cada 3s</li>
+        <li>Previsão de passagens (5 dias)</li>
+        <li>Telemetria completa (Vel/Alt)</li>
+        <li>Trajetória orbital (90 min)</li>
+      </ul>
+    </td>
+    <td>
+      <ul>
+        <li>Exact tracking every 3s</li>
+        <li>Pass predictions (5 days)</li>
+        <li>Full telemetry (Vel/Alt)</li>
+        <li>Orbital path (90 min)</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
-Painel de Telemetria: Visualização de latitude, longitude, altitude e velocidade orbital.
+<br>
 
-Previsão de Passagem: Clique em qualquer lugar do mapa para calcular quando a estação passará por esse local nos próximos 5 dias.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zGravity123/zGravity123/main/images/contributions.png" alt="Como Usar" width="100%">
+</p>
 
-Contagem Decrescente: Cronómetro em tempo real para a próxima observação.
+### 🛠️ Como usar? / How to use?
+1.  **Download:** Descarregue o ficheiro `.zip` do repositório.
+2.  **Extract:** Extraia os ficheiros para uma pasta.
+3.  **Run:** Arraste o ficheiro `index.html` para o seu navegador de preferência.
 
-Visualização de Trajetória: Desenha a órbita prevista para os próximos 90 minutos (aprox. uma órbita completa).
+<br>
 
-Interface Bilingue: Suporte completo para Português e Inglês.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zGravity123/zGravity123/main/images/contact.png" alt="Contact" width="100%">
+</p>
 
-Design Futurista: Interface escura, responsiva e otimizada para dispositivos móveis.
+<p align="center">
+  <a href="https://github.com/JDS-py">
+    <img src="https://img.shields.io/badge/GitHub-JDS--py-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Contact" />
+  </a>
+</p>
 
-🛠️ Tecnologias Utilizadas
-HTML5 / CSS3: Estrutura e estilização (efeito glassmorphism).
-
-JavaScript (ES6+): Lógica da aplicação e integração de APIs.
-
-Leaflet.js: Biblioteca para o mapa interativo.
-
-Satellite.js: Biblioteca para propagação de órbitas SGP4/SDP4 através de dados TLE.
-
-🛠️ Como usar?
-
-Fazer dowload do zip
-
-Tirar o zip 
-
-Puxar ate ao seu browser e largar.
-
-🇬🇧 English
-📋 About the Project
-This project is an interactive tool for space enthusiasts to track the International Space Station (ISS) in real-time. It provides live telemetry and allows users to predict future sightings based on any geographical coordinate.
-
-✨ Features
-Live Tracking: Exact ISS position updated every 3 seconds.
-
-Telemetry Dashboard: Displays real-time latitude, longitude, altitude, and velocity.
-
-Pass Prediction: Click anywhere on the map to calculate the next visible pass.
-
-Live Countdown: Real-time timer counting down to the next sighting at the selected location.
-
-Trajectory Path: Renders the predicted orbital path for the next 90 minutes.
-
-Bilingual UI: Full support for Portuguese and English.
-
-Responsive Design: Mobile-friendly interface with a sleek, futuristic dark theme.
-
-🛠️ Tech Stack
-HTML5 / CSS3: Layout and styling.
-
-JavaScript (ES6+): Application logic and API fetching.
-
-Leaflet.js: Interactive mapping library.
-
-Satellite.js: SGP4/SDP4 orbit propagation using TLE data.
-
-🛠️ How to use?
-
-Download the zip file.
-
-Unzip the file. Drag and drop it into your browser.
+<p align="center">
+  Desenvolvido com ❤️ por <b>JDS</b>
+</p>
