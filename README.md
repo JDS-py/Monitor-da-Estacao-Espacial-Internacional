@@ -66,7 +66,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-In Development-yellow?style=for-the-badge&logo=github&logoColor=white" alt="Status Operacional" />
+  <img src="https://img.shields.io/badge/Status-In Deployment-yellow?style=for-the-badge&logo=github&logoColor=white" alt="Status Operacional" />
   <img src="https://img.shields.io/badge/Version-5.0-blue?style=for-the-badge" alt="Versão" />
   <img src="https://img.shields.io/badge/New-Rebuild everything-blue?style=for-the-badge" alt="New" />
 </p>
