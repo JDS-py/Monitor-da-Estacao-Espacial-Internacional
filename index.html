@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor da Estação Espacial Internacional</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #ffffff; height: 100vh;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        header {
+            text-align: center; padding: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            margin: 0; font-size: 1.8rem; letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.8); color: #4ecdc4;
+        }
+
+        #btn-idioma {
+            position: absolute; top: 15px; right: 20px;
+            background: rgba(15, 32, 39, 0.8);
+            color: #4ecdc4; border: 1px solid #4ecdc4;
+            padding: 8px 15px; border-radius: 8px;
+            font-size: 0.9rem; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #btn-idioma:hover { background: rgba(78, 205, 196, 0.2); }
+
+        main { display: flex; flex: 1; position: relative; }
+        #map { flex: 1; width: 100%; z-index: 1; cursor: grab; }
+        #map:active { cursor: grabbing; }
+
+        #botoes-topo {
+            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; z-index: 1000; flex-wrap: wrap; justify-content: center;
+            width: 90%; max-width: 800px;
+        }
+
+        .btn-controlo {
+            padding: 10px 18px; border-radius: 30px; border: none;
+            font-size: 0.9rem; font-weight: bold; cursor: pointer; 
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+
+        .btn-inativo { background: rgba(32, 58, 67, 0.9); color: #4ecdc4; border: 1px solid #4ecdc4; }
+        .btn-inativo:hover { background: rgba(78, 205, 196, 0.2); }
+        .btn-ativo { background: #ff6b6b; color: white; border: 1px solid #ff6b6b; box-shadow: 0 0 20px rgba(255, 107, 107, 0.6); }
+        
+        .btn-tripulacao { background: #feca57; color: #222; border: 1px solid #feca57; }
+        .btn-tripulacao:hover { background: #ff9f43; color: white; }
+        
+        .btn-energia { background: #2ecc71; color: #222; border: 1px solid #2ecc71; }
+        .btn-energia:hover { background: #27ae60; color: white; }
+
+        .pulsar { animation: pulsar-anim 1.5s infinite; }
+
+        @keyframes pulsar-anim {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        #dashboard {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px;
+            background: rgba(15, 32, 39, 0.85); backdrop-filter: blur(10px);
+            padding: 15px 30px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6); z-index: 1000;
+            flex-wrap: wrap; justify-content: center;
+        }
+
+        .stat-card { text-align: center; min-width: 100px; }
+        .stat-card h3 { margin: 0; font-size: 0.8rem; color: #a8b2d1; text-transform: uppercase; }
+        .stat-card p { margin: 5px 0 0; font-size: 1.2rem; font-weight: bold; color: #4ecdc4; }
+        .stat-solar { color: #2ecc71 !important; } 
+        .stat-draining { color: #e67e22 !important; }
+
+        .side-panel {
+            position: absolute; top: 75px; width: 320px;
+            background: rgba(15, 32, 39, 0.95); backdrop-filter: blur(15px);
+            border: 1px solid rgba(78, 205, 196, 0.4); border-radius: 15px; padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 1000;
+            transition: all 0.4s ease-in-out; max-height: 75vh; overflow-y: auto;
+        }
+        
+        #prediction-panel { right: 20px; }
+        #prediction-panel.hidden { opacity: 0; transform: translateX(120%); pointer-events: none; }
+        
+        #crew-panel { left: 20px; border-color: #feca57; }
+        #crew-panel.hidden { opacity: 0; transform: translateX(-120%); pointer-events: none; }
+
+        #energy-panel { left: 20px; border-color: #2ecc71; }
+        #energy-panel.hidden { opacity: 0; transform: translateX(-120%); pointer-events: none; }
+
+        .close-btn { position: absolute; top: 10px; right: 15px; color: #a8b2d1; font-size: 2rem; cursor: pointer; line-height: 1; }
+        .close-btn:hover { color: #ff6b6b; }
+        .side-panel h2 { margin-top: 0; font-size: 1.2rem; color: #ffffff; margin-bottom: 15px;}
+        
+        /* Estilos do Painel de Energia */
+        .energy-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid rgba(46, 204, 113, 0.3); }
+        .energy-box h4 { margin: 0 0 5px 0; color: #a8b2d1; font-size: 0.85rem; text-transform: uppercase; }
+        .energy-val { font-size: 1.8rem; font-weight: bold; font-family: 'Courier New', Courier, monospace; }
+        
+        .bat-container { width: 100%; background: #333; border-radius: 10px; margin-top: 10px; overflow: hidden; height: 20px; position: relative; }
+        .bat-fill { height: 100%; background: #2ecc71; transition: width 1s ease, background 1s ease; }
+        .bat-text { position: absolute; width: 100%; text-align: center; top: 0; left: 0; font-size: 0.8rem; line-height: 20px; font-weight: bold; text-shadow: 0 0 3px #000; }
+
+        .crew-info { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        .crew-info span { font-size: 2rem; font-weight: bold; color: #feca57; }
+        .crew-list { list-style: none; padding: 0; margin: 0; }
+        .crew-list li { background: rgba(255,255,255,0.05); margin-bottom: 8px; padding: 10px; border-radius: 8px; border-left: 3px solid #feca57; }
+        .crew-list strong { color: #4ecdc4; display: block; font-size: 1.1rem;}
+        .crew-list small { color: #a8b2d1; }
+
+        #countdown-container { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; text-align: center; margin: 15px 0; border: 1px solid rgba(255, 107, 107, 0.3); }
+        #countdown-container h4 { margin: 0 0 5px 0; font-size: 0.9rem; color: #a8b2d1; text-transform: uppercase; }
+        #countdown-display { font-size: 1.8rem; font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #ff6b6b; text-shadow: 0 0 10px rgba(255, 107, 107, 0.6); }
+
+        @media (max-width: 900px) {
+            #botoes-topo { width: 95%; top: 10px; gap: 8px; flex-direction: row; }
+            .btn-controlo { flex: 1; font-size: 0.75rem; padding: 8px; min-width: 45%; }
+            #dashboard { width: 95%; padding: 10px; bottom: 10px; gap: 10px; }
+            .stat-card p { font-size: 1rem; }
+            .side-panel { width: 85%; top: 110px; right: 5%; left: 5%; }
+            #btn-idioma { top: 60px; right: 10px; font-size: 0.8rem; padding: 5px 10px;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="main-title">Monitor e Previsão da EEI 🛰️</h1>
+        <button id="btn-idioma" onclick="alternarIdioma()">🇬🇧 Mudar para Inglês</button>
+    </header>
+
+    <main>
+        <div id="botoes-topo">
+            <button id="btn-modo-alvo" class="btn-controlo btn-inativo" onclick="alternarModoAlvo()">
+                📍 Nova Passagem
+            </button>
+            <button id="btn-trajetoria" class="btn-controlo btn-inativo" onclick="alternarTrajetoria()">
+                🗺️ Trajetória
+            </button>
+            <button id="btn-tripulacao" class="btn-controlo btn-tripulacao" onclick="abrirPainel('crew')">
+                👨‍🚀 Tripulação
+            </button>
+            <button id="btn-energia-menu" class="btn-controlo btn-energia" onclick="abrirPainel('energy')">
+                ⚡ Estado Energia
+            </button>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="dashboard">
+            <div class="stat-card"><h3 id="lbl-lat">Latitude</h3><p id="lat">---</p></div>
+            <div class="stat-card"><h3 id="lbl-lon">Longitude</h3><p id="lon">---</p></div>
+            <div class="stat-card"><h3 id="lbl-alt">Altitude</h3><p id="alt">---</p></div>
+            <div class="stat-card"><h3 id="lbl-vel">Velocidade</h3><p id="vel">---</p></div>
+            <div class="stat-card"><h3 id="lbl-energia" title="Simulação baseada na posição solar">Bateria (Resumo)</h3><p id="bateria-resumo" class="stat-solar">---</p></div>
+        </div>
+
+        <div id="prediction-panel" class="side-panel hidden">
+            <span class="close-btn" onclick="fecharPaineis()">×</span>
+            <h2 id="panel-title">Previsão de Passagem 🔭</h2>
+            <p id="pred-coord" style="font-size: 0.85rem; color: #a8b2d1; margin-bottom: 5px;"></p>
+            <div id="pred-time">...</div>
+            <div id="countdown-container" class="hidden">
+                <h4 id="lbl-countdown">Tempo Restante</h4>
+                <div id="countdown-display">--:--:--</div>
+            </div>
+            <p id="pred-extra-info" style="font-size: 0.85rem;"></p>
+        </div>
+
+        <div id="crew-panel" class="side-panel hidden">
+            <span class="close-btn" onclick="fecharPaineis()">×</span>
+            <h2 id="crew-title">Tripulação Atual 👨‍🚀</h2>
+            <div class="crew-info">
+                <span id="crew-count">0</span><br>
+                <small id="lbl-pessoas">pessoas no espaço</small>
+            </div>
+            <ul id="crew-list-container" class="crew-list">
+                <li style="text-align: center; color: #a8b2d1;">A comunicar com a base... 📡</li>
+            </ul>
+        </div>
+
+        <div id="energy-panel" class="side-panel hidden">
+            <span class="close-btn" onclick="fecharPaineis()">×</span>
+            <h2 id="energy-title">Sistema de Energia ⚡</h2>
+            
+            <div class="energy-box">
+                <h4 id="lbl-estado-solar">Status Solar</h4>
+                <div id="solar-status-icon" style="font-size: 2.5rem; margin: 5px 0;">☀️</div>
+                <div id="solar-status-text" style="color: #feca57; font-weight: bold;">A Gerar Energia</div>
+            </div>
+
+            <div class="energy-box">
+                <h4 id="lbl-geracao">Geração Atual (Est.)</h4>
+                <div id="val-geracao" class="energy-val" style="color: #2ecc71;">0.00 kW</div>
+            </div>
+
+            <div class="energy-box">
+                <h4 id="lbl-consumo">Consumo da Estação</h4>
+                <div id="val-consumo" class="energy-val" style="color: #ff6b6b;">85.40 kW</div>
+            </div>
+
+            <div class="energy-box" style="margin-bottom: 0;">
+                <h4 id="lbl-bateria-total">Carga das Baterias</h4>
+                <div class="bat-container">
+                    <div id="bat-fill-bar" class="bat-fill" style="width: 85%;"></div>
+                    <div id="bat-text-bar" class="bat-text">85.00%</div>
+                </div>
+            </div>
+            <p style="font-size: 0.7rem; color: #a8b2d1; text-align: center; margin-top: 10px;" id="lbl-sim-aviso">
+                * Dados simulados com base na telemetria de luz solar da API.
+            </p>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js"></script>
+    
+    <script>
+        const i18n = {
+            pt: {
+                mudarPara: "🇬🇧 Mudar para Inglês", title: "Monitor e Previsão da EEI 🛰️",
+                btnInativo: "📍 Nova Passagem", btnAtivo: "🎯 Seleciona no mapa...",
+                trajInativo: "🗺️ Trajetória", trajAtivo: "🗺️ Ocultar",
+                btnCrew: "👨‍🚀 Tripulação", btnEnergy: "⚡ Energia",
+                crewTitle: "Tripulação Atual 👨‍🚀", energyTitle: "Sistema de Energia ⚡",
+                lblPessoas: "pessoas na estação", craft: "Nave / Missão:",
+                lat: "Latitude", lon: "Longitude", alt: "Altitude", vel: "Velocidade", energia: "Bateria",
+                predTitle: "Previsão de Passagem 🔭", countdownTitle: "Tempo Restante",
+                calcOrbit: "A calcular órbita... ⚙️", passingNow: "A PASSAR AGORA! 🚀",
+                target: "Alvo:", scheduled: "Agendado para", maxElev: "Elevação máxima",
+                noPass: "Nenhuma passagem encontrada.", noPassExtra: "A estação não passará por aqui em 5 dias.",
+                error: "Erro na simulação.", comms: "A comunicar com a base... 📡",
+                estadoSolar: "Status Solar", geracao: "Geração Atual (Est.)", consumo: "Consumo da Estação", batTotal: "Carga das Baterias",
+                gerando: "A Gerar Energia", eclipse: "Zona de Eclipse (Sombra)", simAviso: "* Dados simulados com base na luz solar."
+            },
+            en: {
+                mudarPara: "🇵🇹 Switch to Portuguese", title: "ISS Monitor & Prediction 🛰️",
+                btnInativo: "📍 New Pass", btnAtivo: "🎯 Select on map...",
+                trajInativo: "🗺️ Trajectory", trajAtivo: "🗺️ Hide",
+                btnCrew: "👨‍🚀 Crew", btnEnergy: "⚡ Energy",
+                crewTitle: "Current Crew 👨‍🚀", energyTitle: "Power System ⚡",
+                lblPessoas: "people on station", craft: "Craft / Mission:",
+                lat: "Latitude", lon: "Longitude", alt: "Altitude", vel: "Velocity", energia: "Battery",
+                predTitle: "Pass Prediction 🔭", countdownTitle: "Time Remaining",
+                calcOrbit: "Calculating orbit... ⚙️", passingNow: "PASSING NOW! 🚀",
+                target: "Target:", scheduled: "Scheduled for", maxElev: "Max elevation",
+                noPass: "No pass found.", noPassExtra: "The station won't pass here in 5 days.",
+                error: "Simulation error.", comms: "Communicating with base... 📡",
+                estadoSolar: "Solar Status", geracao: "Current Gen. (Est.)", consumo: "Station Load", batTotal: "Battery Charge",
+                gerando: "Generating Power", eclipse: "Eclipse Zone (Shadow)", simAviso: "* Simulated data based on solar light."
+            }
+        };
+
+        let idiomaAtual = 'pt';
+        let nivelBateria = 85.0; 
+        let dadosGlobaisVisibilidade = 'day';
+
+        function alternarIdioma() {
+            idiomaAtual = idiomaAtual === 'pt' ? 'en' : 'pt';
+            atualizarTextosInterface();
+            if(!document.getElementById('crew-panel').classList.contains('hidden')) { carregarEProcessarTripulacao(); }
+        }
+
+        function atualizarTextosInterface() {
+            const txt = i18n[idiomaAtual];
+            document.getElementById('btn-idioma').innerText = txt.mudarPara;
+            document.getElementById('main-title').innerText = txt.title;
+            document.getElementById('lbl-lat').innerText = txt.lat;
+            document.getElementById('lbl-lon').innerText = txt.lon;
+            document.getElementById('lbl-alt').innerText = txt.alt;
+            document.getElementById('lbl-vel').innerText = txt.vel;
+            document.getElementById('lbl-energia').innerText = txt.energia;
+            
+            document.getElementById('panel-title').innerText = txt.predTitle;
+            document.getElementById('lbl-countdown').innerText = txt.countdownTitle;
+            
+            document.getElementById('btn-tripulacao').innerText = txt.btnCrew;
+            document.getElementById('crew-title').innerText = txt.crewTitle;
+            document.getElementById('lbl-pessoas').innerText = txt.lblPessoas;
+
+            document.getElementById('btn-energia-menu').innerText = txt.btnEnergy;
+            document.getElementById('energy-title').innerText = txt.energyTitle;
+            document.getElementById('lbl-estado-solar').innerText = txt.estadoSolar;
+            document.getElementById('lbl-geracao').innerText = txt.geracao;
+            document.getElementById('lbl-consumo').innerText = txt.consumo;
+            document.getElementById('lbl-bateria-total').innerText = txt.batTotal;
+            document.getElementById('lbl-sim-aviso').innerText = txt.simAviso;
+
+            const btnAlvo = document.getElementById('btn-modo-alvo');
+            btnAlvo.innerText = modoAlvoAtivo ? txt.btnAtivo : txt.btnInativo;
+
+            const btnTraj = document.getElementById('btn-trajetoria');
+            btnTraj.innerText = modoTrajetoriaAtivo ? txt.trajAtivo : txt.trajInativo;
+            
+            atualizarUIEnergia();
+        }
+
+        function simularBateria() {
+            // Lógica de carga e descarga
+            if (dadosGlobaisVisibilidade === 'day') {
+                nivelBateria += 0.04; 
+                if (nivelBateria > 100) nivelBateria = 100;
+            } else {
+                nivelBateria -= 0.04; 
+                if (nivelBateria < 65) nivelBateria = 65; 
+            }
+            atualizarUIEnergia();
+        }
+
+        function atualizarUIEnergia() {
+            const txt = i18n[idiomaAtual];
+            
+            // 1. Atualizar Resumo no Dashboard Inferior
+            const pResumo = document.getElementById('bateria-resumo');
+            const icone = dadosGlobaisVisibilidade === 'day' ? '☀️' : '🌑';
+            pResumo.innerText = nivelBateria.toFixed(1) + '% ' + icone;
+            pResumo.className = dadosGlobaisVisibilidade === 'day' ? 'stat-solar' : 'stat-draining';
+
+            // 2. Atualizar o Menu Detalhado de Energia (Se estiver a ser usado)
+            const iconPanel = document.getElementById('solar-status-icon');
+            const textPanel = document.getElementById('solar-status-text');
+            const valGeracao = document.getElementById('val-geracao');
+            const valConsumo = document.getElementById('val-consumo');
+            
+            // Simular flutuações de telemetria
+            let baseConsumo = 80 + (Math.random() * 5); // Consumo oscila entre 80 e 85 kW
+            valConsumo.innerText = baseConsumo.toFixed(2) + ' kW';
+
+            if (dadosGlobaisVisibilidade === 'day') {
+                iconPanel.innerText = '☀️';
+                textPanel.innerText = txt.gerando;
+                textPanel.style.color = '#feca57';
+                
+                // Geração simulada entre 100 e 110 kW quando no sol
+                let baseGeracao = 100 + (Math.random() * 10);
+                valGeracao.innerText = baseGeracao.toFixed(2) + ' kW';
+                valGeracao.style.color = '#2ecc71';
+                
+                document.getElementById('bat-fill-bar').style.background = '#2ecc71';
+            } else {
+                iconPanel.innerText = '🌑';
+                textPanel.innerText = txt.eclipse;
+                textPanel.style.color = '#a8b2d1';
+                
+                valGeracao.innerText = '0.00 kW';
+                valGeracao.style.color = '#a8b2d1';
+                
+                document.getElementById('bat-fill-bar').style.background = '#e67e22';
+            }
+
+            // Atualizar barra de progresso
+            document.getElementById('bat-fill-bar').style.width = nivelBateria + '%';
+            document.getElementById('bat-text-bar').innerText = nivelBateria.toFixed(2) + '%';
+        }
+
+        const map = L.map('map', { zoomControl: false }).setView([0, 0], 3);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 10 }).addTo(map);
+
+        const issIcon = L.icon({
+            iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/International_Space_Station.svg',
+            iconSize: [60, 40], iconAnchor: [30, 20]
+        });
+        
+        let issMarker = L.marker([0, 0], {icon: issIcon, zIndexOffset: 1000}).addTo(map);
+        let clickMarker = null; let primeiraVez = true;
+
+        async function atualizarISSAoVivo() {
+            try {
+                const resposta = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+                const dados = await resposta.json();
+                issMarker.setLatLng([dados.latitude, dados.longitude]);
+                if (primeiraVez) { map.setView([dados.latitude, dados.longitude], 4); primeiraVez = false; }
+                
+                document.getElementById('lat').textContent = dados.latitude.toFixed(4) + '°';
+                document.getElementById('lon').textContent = dados.longitude.toFixed(4) + '°';
+                document.getElementById('alt').textContent = Math.round(dados.altitude) + ' km';
+                document.getElementById('vel').textContent = Math.round(dados.velocity).toLocaleString() + ' km/h';
+                
+                dadosGlobaisVisibilidade = dados.visibility;
+                simularBateria();
+
+            } catch (erro) { console.error(erro); }
+        }
+        
+        atualizarISSAoVivo(); 
+        setInterval(atualizarISSAoVivo, 3000);
+
+        function fecharPaineis() {
+            document.getElementById('prediction-panel').classList.add('hidden');
+            document.getElementById('crew-panel').classList.add('hidden');
+            document.getElementById('energy-panel').classList.add('hidden');
+            if (clickMarker) map.removeLayer(clickMarker);
+            clickMarker = null; pararCountdown();
+        }
+
+        function abrirPainel(qual) {
+            fecharPaineis(); // Fecha tudo primeiro
+            if (qual === 'crew') {
+                document.getElementById('crew-panel').classList.remove('hidden');
+                carregarEProcessarTripulacao();
+            } else if (qual === 'energy') {
+                document.getElementById('energy-panel').classList.remove('hidden');
+                atualizarUIEnergia();
+            }
+        }
+
+        async function carregarEProcessarTripulacao() {
+            const container = document.getElementById('crew-list-container');
+            const txt = i18n[idiomaAtual];
+            container.innerHTML = `<li style="text-align: center; color: #a8b2d1;">${txt.comms}</li>`;
+            try {
+                const proxyUrl = 'https://api.allorigins.win/get?url=';
+                const apiUrl = encodeURIComponent('http://api.open-notify.org/astros.json');
+                const resposta = await fetch(proxyUrl + apiUrl);
+                const dataProxy = await resposta.json();
+                const dadosAstros = JSON.parse(dataProxy.contents);
+
+                const equipaISS = dadosAstros.people.filter(pessoa => pessoa.craft === 'ISS');
+                document.getElementById('crew-count').innerText = equipaISS.length;
+                container.innerHTML = "";
+
+                equipaISS.forEach(membro => {
+                    let li = document.createElement('li');
+                    li.innerHTML = `<strong>${membro.name}</strong><small>${txt.craft} ${membro.craft}</small>`;
+                    container.appendChild(li);
+                });
+            } catch (erro) {
+                container.innerHTML = `<li style="text-align: center; color: #ff6b6b;">${txt.error}</li>`;
+            }
+        }
+
+        let modoTrajetoriaAtivo = false; let camadaTrajetoria = null;
+
+        async function alternarTrajetoria() {
+            modoTrajetoriaAtivo = !modoTrajetoriaAtivo;
+            const btn = document.getElementById('btn-trajetoria');
+            const txt = i18n[idiomaAtual];
+
+            if (modoTrajetoriaAtivo) {
+                btn.className = 'btn-controlo btn-ativo'; btn.innerText = txt.trajAtivo;
+                await desenharTrajetoria();
+            } else {
+                btn.className = 'btn-controlo btn-inativo'; btn.innerText = txt.trajInativo;
+                if (camadaTrajetoria) { map.removeLayer(camadaTrajetoria); camadaTrajetoria = null; }
+            }
+        }
+
+        async function desenharTrajetoria() {
+            try {
+                const respostaTLE = await fetch('https://api.wheretheiss.at/v1/satellites/25544/tles');
+                const dadosTLE = await respostaTLE.json();
+                const satrec = satellite.twoline2satrec(dadosTLE.line1, dadosTLE.line2);
+                let agora = new Date(); let segmentos = []; let segmentoAtual = []; let lngAnterior = null;
+
+                for(let i = 0; i <= 90; i++) {
+                    let tempoTeste = new Date(agora.getTime() + i * 60000);
+                    let posEVel = satellite.propagate(satrec, tempoTeste);
+                    let gmst = satellite.gstime(tempoTeste);
+                    let positionGd = satellite.eciToGeodetic(posEVel.position, gmst);
+                    let lat = satellite.degreesLat(positionGd.latitude);
+                    let lng = satellite.degreesLong(positionGd.longitude);
+
+                    if (lngAnterior !== null && Math.abs(lng - lngAnterior) > 180) {
+                        segmentos.push(segmentoAtual); segmentoAtual = [];
+                    }
+                    segmentoAtual.push([lat, lng]); lngAnterior = lng;
+                }
+                segmentos.push(segmentoAtual);
+                if (camadaTrajetoria) map.removeLayer(camadaTrajetoria);
+                
+                camadaTrajetoria = L.polyline(segmentos, { color: '#ff9f43', weight: 3, opacity: 0.8, dashArray: '10, 15' }).addTo(map);
+            } catch (e) {}
+        }
+
+        let modoAlvoAtivo = false; let temporizadorCountdown = null;
+
+        function alternarModoAlvo() {
+            modoAlvoAtivo = !modoAlvoAtivo;
+            const btn = document.getElementById('btn-modo-alvo');
+            const mapEl = document.getElementById('map');
+            if (modoAlvoAtivo) {
+                btn.className = 'btn-controlo btn-ativo pulsar'; 
+                btn.innerText = i18n[idiomaAtual].btnAtivo; mapEl.style.cursor = 'crosshair';
+            } else {
+                btn.className = 'btn-controlo btn-inativo'; 
+                btn.innerText = i18n[idiomaAtual].btnInativo; mapEl.style.cursor = 'grab';
+            }
+        }
+
+        function pararCountdown() {
+            if (temporizadorCountdown) clearInterval(temporizadorCountdown);
+            document.getElementById('countdown-container').classList.add('hidden');
+        }
+
+        function iniciarCountdown(dataFutura) {
+            pararCountdown();
+            document.getElementById('countdown-container').classList.remove('hidden');
+            const display = document.getElementById('countdown-display');
+
+            temporizadorCountdown = setInterval(function() {
+                const diferenca = dataFutura.getTime() - new Date().getTime();
+
+                if (diferenca < 0) {
+                    pararCountdown(); document.getElementById('countdown-container').classList.remove('hidden');
+                    display.innerHTML = i18n[idiomaAtual].passingNow; display.style.color = "#4ecdc4"; return;
+                }
+
+                const d = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diferenca % (1000 * 60)) / 1000);
+
+                let texto = d > 0 ? d + "d " : "";
+                texto += h.toString().padStart(2, '0') + "h " + m.toString().padStart(2, '0') + "m " + s.toString().padStart(2, '0') + "s";
+                display.innerHTML = texto; display.style.color = "#ff6b6b"; 
+            }, 1000);
+        }
+
+        map.on('click', async function(e) {
+            if (!modoAlvoAtivo) return;
+            alternarModoAlvo(); fecharPaineis();
+
+            const lat = e.latlng.lat; const lng = e.latlng.lng;
+            if (clickMarker) { clickMarker.setLatLng([lat, lng]); } else { clickMarker = L.marker([lat, lng]).addTo(map); }
+
+            document.getElementById('prediction-panel').classList.remove('hidden'); pararCountdown();
+            const txt = i18n[idiomaAtual];
+            
+            document.getElementById('pred-coord').textContent = `${txt.target} ${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+            document.getElementById('pred-time').textContent = txt.calcOrbit;
+            document.getElementById('pred-extra-info').textContent = "";
+
+            try {
+                const respostaTLE = await fetch('https://api.wheretheiss.at/v1/satellites/25544/tles');
+                const dadosTLE = await respostaTLE.json();
+                const satrec = satellite.twoline2satrec(dadosTLE.line1, dadosTLE.line2);
+                let agora = new Date(); let proximaPassagem = null; let elevacaoMaxima = 0;
+
+                for(let i = 0; i < 7200; i++) {
+                    let tempoTeste = new Date(agora.getTime() + i * 60000);
+                    let posEVel = satellite.propagate(satrec, tempoTeste);
+                    let gmst = satellite.gstime(tempoTeste);
+                    let positionEcf = satellite.eciToEcf(posEVel.position, gmst);
+                    let obs = { longitude: lng * Math.PI / 180, latitude: lat * Math.PI / 180, height: 0 };
+                    let angulos = satellite.ecfToLookAngles(obs, positionEcf);
+                    let elevacaoGraus = angulos.elevation * 180 / Math.PI;
+
+                    if (elevacaoGraus > 10) { proximaPassagem = tempoTeste; elevacaoMaxima = elevacaoGraus; break; }
+                }
+
+                if (proximaPassagem) {
+                    const loc = idiomaAtual === 'pt' ? 'pt-PT' : 'en-US';
+                    const dataFormatada = proximaPassagem.toLocaleDateString(loc);
+                    const horaFormatada = proximaPassagem.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+                    
+                    document.getElementById('pred-time').textContent = `${txt.scheduled}: ${dataFormatada} - ${horaFormatada}`;
+                    document.getElementById('pred-extra-info').innerHTML = `${txt.maxElev}: <strong>${Math.round(elevacaoMaxima)}°</strong>.`;
+                    iniciarCountdown(proximaPassagem);
+                } else {
+                    document.getElementById('pred-time').textContent = txt.noPass;
+                    document.getElementById('pred-extra-info').textContent = txt.noPassExtra;
+                }
+            } catch (erro) {
+                document.getElementById('pred-time').textContent = txt.error;
+            }
+        });
+    </script>
+</body>
+</html>
