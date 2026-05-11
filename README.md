@@ -1,7 +1,7 @@
 🛰️ ISS Monitor & Predictor (Monitor e Previsão da EEI)
 Uma aplicação web interativa e responsiva para monitorizar a posição da Estação Espacial Internacional (EEI) em tempo real, visualizar a sua trajetória orbital e prever a próxima passagem sobre qualquer ponto do globo.
 
-🇵🇹 Para a secção em Português:
+🇵🇹 Português:
 🚀 Novidades da Última Atualização
 
 Painel da Tripulação (Em Tempo Real): Descobre quantas pessoas estão atualmente a bordo da estação, incluindo os seus nomes e missões.
@@ -12,7 +12,7 @@ Indicador de Bateria no Dashboard: O nível de bateria simulado e o estado atual
 
 Interface Renovada: Os botões de controlo no topo foram reorganizados e novos painéis laterais deslizantes ("Tripulação" e "Energia") foram adicionados para manter o mapa limpo e organizado.
 
-🇬🇧 Para a secção em Inglês:
+🇬🇧 English:
 🚀 What's New in the Latest Update
 
 Live Crew Panel: Find out exactly how many people are currently on the station, along with their names and specific spacecraft.
