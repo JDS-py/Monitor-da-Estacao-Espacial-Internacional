@@ -12,18 +12,16 @@
   <tr>
     <td>
       <ul>
-        <li>Painel da Tripulação em tempo real</li>
-        <li>Sistema de Energia Simulado</li>
-        <li>Zonas de Eclipse (Luz vs Sombra)</li>
-        <li>Interface com painéis deslizantes</li>
+        <li>Nova IU</li>
+        <li>Novas ferramentas</li>
+        <li>Arranjo de bugs</li>
       </ul>
     </td>
     <td>
       <ul>
-        <li>Real-time Crew Panel</li>
-        <li>Simulated Power System</li>
-        <li>Eclipse Zones (Light vs Shadow)</li>
-        <li>Sliding panel interface</li>
+        <li>New IU</li>
+        <li>New tools</li>
+        <li>Bugs fixed</li>
       </ul>
     </td>
   </tr>
@@ -61,13 +59,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-OPERACIONAL-brightgreen?style=for-the-badge&logo=github&logoColor=white" alt="Status Operacional" />
-  <img src="https://img.shields.io/badge/Version-4.0-blue?style=for-the-badge" alt="Versão" />
-  <img src="https://img.shields.io/badge/New-tools-blue?style=for-the-badge" alt="New" />
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-In Deployment-yellow?style=for-the-badge&logo=github&logoColor=white" alt="Status Operacional" />
-  <img src="https://img.shields.io/badge/Version-5.0-blue?style=for-the-badge" alt="Versão" />
+  <img src="https://img.shields.io/badge/Version-last-blue?style=for-the-badge" alt="Versão" />
   <img src="https://img.shields.io/badge/New-Rebuild everything-blue?style=for-the-badge" alt="New" />
 </p>
 
